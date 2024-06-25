@@ -4,6 +4,8 @@ import { LoginDto, RegisterDto } from './dto/login.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { Users } from 'src/users/schemas/user.schema';
+import { CreateProfileDto } from './dto/create-profile.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 
 @Injectable()
 export class ApiService {
@@ -38,10 +40,8 @@ export class ApiService {
 
   async register(registerDto: RegisterDto): Promise<any> {
     try {
-      const hashedPassword = await bcrypt.hash(registerDto.password, 10);
       const createUsers = await this.userServices.create({
         ...registerDto,
-        password: hashedPassword,
       });
 
       const payload = { username: createUsers.username };
@@ -57,5 +57,55 @@ export class ApiService {
 
   async profile(username: string): Promise<Users> {
     return this.userServices.findOne(username);
+  }
+
+  async updateProfile(
+    username: string,
+    profileDto: UpdateProfileDto,
+    file: Express.Multer.File,
+  ): Promise<any> {
+    try {
+      const avatarUrl = `/uploads/${file.filename}`;
+      if (avatarUrl) {
+        return this.userServices.update(username, {
+          ...profileDto,
+          avatar: avatarUrl,
+        });
+      }
+
+      const getUsers = await this.userServices.findOne(username);
+      if (!getUsers) return { error: 'Users not found.' };
+
+      return this.userServices.update(username, { ...profileDto });
+    } catch (error) {
+      return {
+        error: error,
+      };
+    }
+  }
+
+  async createProfile(
+    username: string,
+    profileDto: CreateProfileDto,
+    file: Express.Multer.File,
+  ): Promise<any> {
+    try {
+      const avatarUrl = `/uploads/${file.filename}`;
+      if (avatarUrl) {
+        return this.userServices.update(username, {
+          ...profileDto,
+          avatar: avatarUrl,
+        });
+      }
+
+      const getUsers = await this.userServices.findOne(username);
+      if (!getUsers) return { error: 'Users not found.' };
+
+      return this.userServices.update(username, { ...profileDto });
+    } catch (error) {
+      return {
+        error: error,
+      };
+    }
   }
 }
