@@ -24,12 +24,16 @@ import { ApiModule } from './api/api.module';
       envFilePath: '.env',
       isGlobal: true,
     }),
-    JwtModule.register({
+    JwtModule.registerAsync({
       global: true,
-      secret: process.env.JWT_SECRET,
-      signOptions: {
-        expiresIn: '24h',
-      },
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET') || 'YouApp@2023!!',
+        signOptions: {
+          expiresIn: configService.get<string>('JWT_EXPIRED') || '12h',
+        },
+      }),
+      inject: [ConfigService],
     }),
   ],
   controllers: [AppController],

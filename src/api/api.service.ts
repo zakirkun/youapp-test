@@ -3,6 +3,7 @@ import { UsersService } from 'src/users/users.service';
 import { LoginDto, RegisterDto } from './dto/login.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { Users } from 'src/users/schemas/user.schema';
 
 @Injectable()
 export class ApiService {
@@ -52,5 +53,9 @@ export class ApiService {
         error: error,
       };
     }
+  }
+
+  async profile(username: string): Promise<Users> {
+    return this.userServices.findOne(username);
   }
 }
