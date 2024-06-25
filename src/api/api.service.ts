@@ -6,13 +6,51 @@ import { JwtService } from '@nestjs/jwt';
 import { Users } from 'src/users/schemas/user.schema';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { MessagesService } from 'src/messages/messages.service';
+import { SendMessageDto } from 'src/messages/dto/send-message.dto';
 
 @Injectable()
 export class ApiService {
   constructor(
     private userServices: UsersService,
     private jwtServices: JwtService,
+    private messageServices: MessagesService,
   ) {}
+
+  async getMessage(username: string): Promise<any> {
+    try {
+      const user = await this.userServices.findOne(username);
+      if (!user) return { errors: 'User does not exists.' };
+
+      const message = await this.messageServices.getMessagesForUser(user.id);
+
+      return {
+        message: message,
+      };
+    } catch (error) {
+      return {
+        error: error,
+      };
+    }
+  }
+
+  async sendMessage(dto: SendMessageDto): Promise<any> {
+    try {
+      const sender = await this.userServices.findById(dto.senderId);
+      if (!sender) return { error: 'Sender not registered.' };
+
+      const receiver = await this.userServices.findById(dto.receiverId);
+      if (!receiver) return { error: 'Receiver not registered.' };
+
+      const sendMessage = await this.messageServices.sendMessage(dto);
+
+      return { sendMessage };
+    } catch (error) {
+      return {
+        error: error,
+      };
+    }
+  }
 
   async login(loginDto: LoginDto): Promise<any> {
     try {

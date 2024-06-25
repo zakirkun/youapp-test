@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Schema as MongooseSchema } from 'mongoose';
+import { Messages } from 'src/messages/schemas/message.schema';
 import { ZodiacService } from 'src/zodiac/zodiac.service';
 
 @Injectable()
@@ -35,6 +36,9 @@ export class Users extends Document {
 
   @Prop({ type: [String], default: [] })
   interest: string[];
+
+  @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Messages' }] }) // Reference to Message schema
+  messages: Messages[];
 
   get zodiacSign(): string {
     const zodiacService = new ZodiacService();

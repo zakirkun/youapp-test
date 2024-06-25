@@ -11,6 +11,9 @@ import { diskStorage } from 'multer';
 import { join } from 'path';
 import { ZodiacService } from './zodiac/zodiac.service';
 import { ZodiacModule } from './zodiac/zodiac.module';
+import { MessagesModule } from './messages/messages.module';
+import { NotificationGateway } from './notification/notification.gateway';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -53,8 +56,10 @@ import { ZodiacModule } from './zodiac/zodiac.module';
       }),
     }),
     ZodiacModule,
+    MessagesModule,
+    NotificationModule,
   ],
   controllers: [AppController],
-  providers: [AppService, ZodiacService],
+  providers: [AppService, ZodiacService, NotificationGateway],
 })
 export class AppModule {}

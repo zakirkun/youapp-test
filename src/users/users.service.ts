@@ -8,7 +8,9 @@ import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(Users.name) private usesrModel: Model<Users>) {}
+  constructor(
+    @InjectModel(Users.name) private readonly usesrModel: Model<Users>,
+  ) {}
 
   async create(createUserDto: CreateUserDto): Promise<Users> {
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
@@ -21,6 +23,10 @@ export class UsersService {
 
   async findOne(username: string): Promise<Users | undefined> {
     return this.usesrModel.findOne({ username });
+  }
+
+  async findById(id: string): Promise<Users | undefined> {
+    return this.usesrModel.findById(id);
   }
 
   async update(username: string, updateDto: UpdateUserDto): Promise<Users> {

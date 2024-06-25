@@ -18,6 +18,7 @@ import { ApiGuard } from './api.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { SendMessageDto } from 'src/messages/dto/send-message.dto';
 
 @Controller('api')
 @ApiTags('api')
@@ -71,5 +72,19 @@ export class ApiController {
     @Body() createDto: CreateProfileDto,
   ) {
     return this.apiServices.createProfile(req.user?.username, createDto, file);
+  }
+
+  @UseGuards(ApiGuard)
+  @ApiBearerAuth('JWT-auth')
+  @Get('viewMessages')
+  async getMessage(@Request() req) {
+    return this.apiServices.getMessage(req.user?.username);
+  }
+
+  @UseGuards(ApiGuard)
+  @ApiBearerAuth('JWT-auth')
+  @Post('sendMessage')
+  async sendMessage(@Body() dto: SendMessageDto) {
+    return this.apiServices.sendMessage(dto);
   }
 }
