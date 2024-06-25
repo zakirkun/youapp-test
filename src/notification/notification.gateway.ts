@@ -13,6 +13,7 @@ export class NotificationGateway {
 
   @EventPattern('message_received')
   async handleNewMessage(@Payload() data: any, @Ctx() context: RmqContext) {
+    console.log('Received Messages', JSON.stringify(data));
     this.notifyUser(data?.receiverId, data.message);
     this.ack(context);
   }

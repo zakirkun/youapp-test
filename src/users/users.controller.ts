@@ -1,10 +1,4 @@
-import { Controller, Get, Res, HttpStatus } from '@nestjs/common';
-import { Response } from 'express';
+import { Controller } from '@nestjs/common';
 
 @Controller('users')
-export class UsersController {
-  @Get('/')
-  findAll(@Res() res: Response) {
-    res.status(HttpStatus.CREATED).json({}).send();
-  }
-}
+export class UsersController {}

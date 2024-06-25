@@ -6,6 +6,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { json, urlencoded } from 'express';
 import { Transport } from '@nestjs/microservices';
+import { IoAdapter } from '@nestjs/platform-socket.io';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -45,6 +46,8 @@ async function bootstrap() {
 
   const configServices = app.get(ConfigService);
   const port = configServices.get<number>('PORT') || 3000;
+
+  app.useWebSocketAdapter(new IoAdapter(app));
 
   app.connectMicroservice({
     transport: Transport.RMQ,
